@@ -2,12 +2,22 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Account extends Model
+class Account extends Model implements FetchIsoCodeInterface
 {
     use SoftDeletes;
+
+    protected $casts = [
+        'balance' => MoneyCast::class,
+    ];
+
+    public function getIsoCodeForKey($key): string
+    {
+        return $this->currency->iso_code;
+    }
 
     public function currency()
     {
