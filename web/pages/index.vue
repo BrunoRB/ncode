@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div>
-      <b-form>
+      <b-form @submit="onSubmit">
         <b-form-group
           id="input-group-2"
           label="Enter your account ID:"
@@ -9,32 +9,43 @@
         >
           <b-form-input
             id="input"
-            type="number"
             v-model="accountID"
+            type="number"
             required
             placeholder="Account ID"
-          ></b-form-input>
+          />
         </b-form-group>
 
-        <b-button nuxt-link :to="'/accounts/' + accountID" variant="primary"
-          >Login</b-button
-        >
+        <b-button variant="primary" type="submit">
+          Login
+        </b-button>
       </b-form>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from "vue"
 
 export default Vue.extend({
+  components: {},
   data() {
     return {
-      accountID: 1
-    };
+      accountID: 1,
+    }
   },
-  components: {}
-});
+
+  mounted() {
+    alert("wefwef")
+  },
+
+  methods: {
+    onSubmit(evt) {
+      alert("wef")
+      evt.preventDefault()
+    },
+  },
+})
 </script>
 
 <style scoped>
