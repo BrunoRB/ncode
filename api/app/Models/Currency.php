@@ -3,6 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Money\Converter;
+use Money\Money;
+use Money\Currency as MoneyCurrency;
+use Money\Exchange\FixedExchange;
+use Money\Currencies\ISOCurrencies;
+use Money\Exchange\ReversedCurrenciesExchange;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Currency extends Model
@@ -26,5 +32,40 @@ class Currency extends Model
     public static function fromCents($money): float
     {
         return $money / 100;
+    }
+
+    /**
+     * Given a $transferAmount, convert it to a value in $to currency
+     */
+    public function convertAmountTo(Money $transferAmount, Currency $to): Money
+    {
+        $from = $this;
+        if ($this->id === $to->id) {
+            // identity
+            return $transferAmount;
+        } else {
+            $isoCurrencies = new ISOCurrencies();
+
+            // convert from our currency to USD
+            $exchange = new FixedExchange([
+                $from->iso_code => [
+                    self::INDEX_CURRENCY => $from->exchange_rate
+                ]
+            ]);
+
+            $converter = new Converter($isoCurrencies, $exchange);
+            $usd = $converter->convert($transferAmount, new MoneyCurrency(self::INDEX_CURRENCY));
+
+            // them from USD we convert to the target currency
+            $targetExchange = new ReversedCurrenciesExchange(new FixedExchange([
+                $to->iso_code => [
+                    self::INDEX_CURRENCY => $to->exchange_rate
+                ]
+            ]));
+            $targetConverter = new Converter($isoCurrencies, $targetExchange);
+            $target = $targetConverter->convert($usd, new MoneyCurrency($to->iso_code));
+
+            return $target;
+        }
     }
 }
