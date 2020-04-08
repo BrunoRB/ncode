@@ -32,6 +32,45 @@ class Transaction extends Model implements FetchIsoCodeInterface
         'to_amount' => MoneyCast::class,
     ];
 
+    /**
+     * Transfer $transferAmount from $from to $to.
+     */
+    public static function makeTransaction(Money $transferAmount, Account $from, Account $to): Transaction
+    {
+        DB::beginTransaction();
+
+        $commit = false;
+        try {
+            $t = new Transaction();
+            $t->amount = $transferAmount;
+            $t->from_id = $from->id;
+            $t->to_id = $to->id;
+            $t->from_currency_id = $from->currency->id;
+            $t->to_currency_id = $to->currency->id;
+
+            $transferAmountInTargetCurrency = $from->currency->convertAmountTo($transferAmount, $to->currency);
+
+            $t->to_amount = $transferAmountInTargetCurrency;
+
+            $t->save();
+
+            $from->balance = $from->balance->subtract($transferAmount);
+            $from->save();
+
+            $to->balance = $to->balance->add($transferAmountInTargetCurrency);
+            $to->save();
+
+            DB::commit();
+            $commit = true;
+        } finally {
+            if (!$commit) {
+                DB::rollback();
+            }
+        }
+
+        return $t;
+    }
+
     public function getIsoCodeForKey($key): string
     {
         return $key === 'amount' ? $this->fromCurrency->iso_code : $this->fromCurrency->iso_code;
