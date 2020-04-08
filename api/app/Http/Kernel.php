@@ -3,6 +3,8 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Routing\Router;
 
 class Kernel extends HttpKernel
 {
@@ -63,4 +65,18 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
+
+    public function __construct(Application $app, Router $router)
+    {
+        /**
+         * No need for CORS on production
+         */
+        if (app()->environment('production')) {
+            $this->middleware = array_filter($this->middleware, function($m) {
+                return $m !== \Fruitcake\Cors\HandleCors::class;
+            });
+        }
+
+        parent::__construct($app, $router);
+    }
 }
