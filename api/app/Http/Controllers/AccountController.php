@@ -24,7 +24,7 @@ class AccountController extends Controller
             'amount' => [
                 'required',
                 'string',
-                'regex:/^([1-9]\d*)(?:\.(\d{1,2}))?$/',
+                'regex:/^(\d+)(?:\.(\d{1,2}))?$/',
                 function ($attribute, $value, $fail) {
                     if ($value <= 0) {
                         $fail($attribute.' should be a positive value.');

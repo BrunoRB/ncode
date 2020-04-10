@@ -26,9 +26,10 @@ class Currency extends Model
 
     public static function toCents(string $money): string
     {
-        if (preg_match('/^0+$/', $money)) {
+        if (preg_match('/^0+(\.0*)?$/', $money)) {
             return '0';
-        } elseif (preg_match('/^([1-9]\d*)(?:\.(\d{1,2}))?$/', $money, $matches)) {
+        } elseif (preg_match('/^(\d+)(?:\.(\d{1,2}))?$/', $money, $matches)) {
+            $matches[1] = preg_replace('/^0+/', '', $matches[1]);
             if (count($matches) == 2) {
                 return $matches[1] . '00';
             } elseif (strlen($matches[2]) === 2) {

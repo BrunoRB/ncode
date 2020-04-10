@@ -78,6 +78,47 @@ class AccountTest extends TestCase
         }
     }
 
+    public function testLeadingZeroesCaseOne()
+    {
+        $currency1 = factory(Currency::class)->create([
+            'exchange_rate' => 1,
+            'iso_code' => 'BRL'
+        ]);
+        $accountFrom = factory(Account::class)->create([
+            'currency_id' => $currency1->id
+        ]);
+        $accountTo = factory(Account::class)->create([
+            'currency_id' => $currency1->id
+        ]);
+        $response = $this->json('POST', "/api/accounts/{$accountFrom->id}/transactions", [
+            'to' => $accountTo->id,
+            'amount' => '0.11'
+        ]);
+        $this->assertEquals(201, $response->status(), substr($response->getContent(), 0, 250));
+    }
+
+    public function testInvalidAmounts()
+    {
+        $currency1 = factory(Currency::class)->create([
+            'exchange_rate' => 1,
+            'iso_code' => 'BRL'
+        ]);
+        $accountFrom = factory(Account::class)->create([
+            'currency_id' => $currency1->id,
+            'balance' => '300000.00'
+        ]);
+        $accountTo = factory(Account::class)->create([
+            'currency_id' => $currency1->id
+        ]);
+        foreach(['0', '0.00', '-1', '-10.00', '$100.00', '$50', 'qqqqqqqqq'] as $invalidAmount)  {
+            $response = $this->json('POST', "/api/accounts/{$accountFrom->id}/transactions", [
+                'to' => $accountTo->id,
+                'amount' => $invalidAmount
+            ]);
+            $this->assertEquals(422, $response->status(), substr($response->getContent(), 0, 250));
+        }
+    }
+
     /**
      * Valid transaction using same currency
      */
