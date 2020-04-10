@@ -251,6 +251,7 @@ export default {
           this.$bvToast.toast(text, {
             title: "Error",
             autoHideDelay: 5000,
+            variant: "danger",
           })
           this.loadingPayment = false
         })
