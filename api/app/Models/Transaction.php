@@ -35,8 +35,12 @@ class Transaction extends Model implements FetchIsoCodeInterface
     /**
      * Transfer $transferAmount from $from to $to.
      */
-    public static function makeTransaction(Money $transferAmount, Account $from, Account $to): Transaction
-    {
+    public static function makeTransaction(
+        Money $transferAmount,
+        Account $from,
+        Account $to,
+        string $details = null
+    ): Transaction {
         DB::beginTransaction();
 
         $commit = false;
@@ -47,6 +51,7 @@ class Transaction extends Model implements FetchIsoCodeInterface
             $t->to_id = $to->id;
             $t->from_currency_id = $from->currency->id;
             $t->to_currency_id = $to->currency->id;
+            $t->details = $details;
 
             $transferAmountInTargetCurrency = $from->currency->convertAmountTo($transferAmount, $to->currency);
 
@@ -73,7 +78,7 @@ class Transaction extends Model implements FetchIsoCodeInterface
 
     public function getIsoCodeForKey($key): string
     {
-        return $key === 'amount' ? $this->fromCurrency->iso_code : $this->fromCurrency->iso_code;
+        return $key === 'amount' ? $this->fromCurrency->iso_code : $this->toCurrency->iso_code;
     }
 
     public function from()
