@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div>
-      <b-form @submit="onSubmit">
+      <b-form @submit.prevent="onSubmit">
         <b-form-group
           id="input-group-2"
           label="Enter your account ID:"
@@ -13,6 +13,7 @@
             type="number"
             required
             placeholder="Account ID"
+            min="1"
           />
         </b-form-group>
 
@@ -31,18 +32,15 @@ export default Vue.extend({
   components: {},
   data() {
     return {
-      accountID: 1,
+      accountID: null,
     }
   },
 
-  mounted() {
-    alert("wefwef")
-  },
+  mounted() {},
 
   methods: {
-    onSubmit(evt) {
-      alert("wef")
-      evt.preventDefault()
+    onSubmit() {
+      this.$router.push({ path: `/accounts/${this.accountID}` })
     },
   },
 })
