@@ -89,11 +89,11 @@ class AccountTest extends TestCase
         ]);
 
         $accountFrom = factory(Account::class)->create([
-            'balance' => '500',
+            'balance' => '500.00',
             'currency_id' => $currency1->id
         ]);
         $accountTo = factory(Account::class)->create([
-            'balance' => '100',
+            'balance' => '100.00',
             'currency_id' => $currency1->id
         ]);
 
@@ -198,10 +198,10 @@ class AccountTest extends TestCase
 
         $accountFrom->refresh();
         $accountTo->refresh();
-        $this->assertEquals('844681218', $accountFrom->balance->getAmount());
+        $this->assertEquals('844681217', $accountFrom->balance->getAmount());
         $this->assertEquals('913319280', $accountTo->balance->getAmount());
 
-        $this->assertEquals('$9,922.37', $data['amount']);
+        $this->assertEquals('$9,922.38', $data['amount']);
         $this->assertEquals('₪4,961.19', $data['to_amount']);
         $this->assertEquals($accountFrom->name, $data['from']);
         $this->assertEquals($accountTo->name, $data['to']);
