@@ -24,9 +24,21 @@ class Currency extends Model
         'name', 'iso_code', 'symbol', 'exchange_rate'
     ];
 
-    public static function toCents($money): int
+    public static function toCents(string $money): string
     {
-        return (int) ($money * 100);
+        if (preg_match('/^0+$/', $money)) {
+            return '0';
+        } elseif (preg_match('/^([1-9]\d*)(?:\.(\d{1,2}))?$/', $money, $matches)) {
+            if (count($matches) == 2) {
+                return $matches[1] . '00';
+            } elseif (strlen($matches[2]) === 2) {
+                return $matches[1] . $matches[2];
+            } else {
+                return $matches[1] . $matches[2] . '0';
+            }
+        } else {
+            throw new \Exception("Invalid");
+        }
     }
 
     public static function fromCents($money): float
