@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Account;
+use App\Models\Currency;
 use Illuminate\Database\Seeder;
 
 class AccountsTableSeeder extends Seeder
@@ -11,14 +13,11 @@ class AccountsTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('accounts')->insert([
-            'name' => 'John',
-            'balance' => 15000
-        ]);
-
-        DB::table('accounts')->insert([
-            'name' => 'Peter',
-            'balance' => 100000
-        ]);
+        foreach (range(1, 10) as $_) {
+            $currencyId = Currency::take(100)->inRandomOrder()->pluck('id')->first();
+            factory(Account::class)->create([
+                'currency_id' => $currencyId ?: null
+            ]);
+        }
     }
 }

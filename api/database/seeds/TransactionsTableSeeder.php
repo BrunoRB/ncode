@@ -1,6 +1,11 @@
 <?php
 
+use App\Models\Account;
+use App\Models\Currency;
+use App\Models\Transaction;
 use Illuminate\Database\Seeder;
+use Money\Money;
+use Money\Currency as MoneyCurrency;
 
 class TransactionsTableSeeder extends Seeder
 {
@@ -11,25 +16,30 @@ class TransactionsTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('transactions')->insert([
-            'from' => 1,
-            'to' => 2,
-            'details' => 'sample transaction',
-            'amount' => 14
-        ]);
+        $faker = \Faker\Factory::create();
+        $accounts = Account::take(100)->get()->keyBy('id');
+        $accountsIds = $accounts->pluck('id', 'id')->toArray();
+        if ($accounts->count() > 1) {
+            foreach ($accounts as $id => $account) {
+                $copy = $accountsIds;
+                unset($copy[$id]);
+                $targetAccount = $accounts[array_rand($copy)];
 
-        DB::table('transactions')->insert([
-            'from' => 1,
-            'to' => 2,
-            'details' => 'sample transaction 2',
-            'amount' => 24
-        ]);
-
-        DB::table('transactions')->insert([
-            'from' => 2,
-            'to' => 1,
-            'details' => 'sample transaction 3',
-            'amount' => 15
-        ]);
+                foreach (range(1, rand(2, 30)) as $_) {
+                    $money = new Money(
+                        rand(1, $account->balance->getAmount()),
+                        new MoneyCurrency($account->currency->iso_code)
+                    );
+                    Transaction::makeTransaction(
+                        $money,
+                        $account,
+                        $targetAccount,
+                        rand(0, 1) ? $faker->text() : null
+                    );
+                }
+            }
+        } else {
+            factory(Transaction::class, 30)->create();
+        }
     }
 }

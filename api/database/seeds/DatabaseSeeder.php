@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        Artisan::call('brybank:upgrade-currencies');
         $this->call(AccountsTableSeeder::class);
         $this->call(TransactionsTableSeeder::class);
     }
