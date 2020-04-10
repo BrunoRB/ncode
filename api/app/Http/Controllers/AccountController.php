@@ -24,6 +24,7 @@ class AccountController extends Controller
             'amount' => [
                 'required',
                 'string',
+                'regex:/^([1-9]\d*)(?:\.(\d{1,2}))?$/',
                 function ($attribute, $value, $fail) {
                     if ($value <= 0) {
                         $fail($attribute.' should be a positive value.');
@@ -45,7 +46,7 @@ class AccountController extends Controller
             abort(400, 'Not enough money to transfer');
         }
 
-        $t = Transaction::makeTransaction($transferAmount, $account, $to);
+        $t = Transaction::makeTransaction($transferAmount, $account, $to, $validatedData['details'] ?? null);
         return new ResourcesTransaction($t);
     }
 
