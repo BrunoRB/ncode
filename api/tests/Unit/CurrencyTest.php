@@ -48,10 +48,11 @@ class CurrencyTest extends TestCase
 
         // should have half the value in the new coin
         $convertedMoney = $currency1->convertAmountTo($money, $currency2);
-        $this->assertEquals($money->getAmount() / 2, $convertedMoney->getAmount());
+        // we are ok with 1 cent of discrepancy on currency conversions
+        $this->assertEqualsWithDelta(floor($money->getAmount() / 2), $convertedMoney->getAmount(), 1);
 
         // now reverse the process, we should get the original value back
         $invertedConvertedMoney = $currency2->convertAmountTo($convertedMoney, $currency1);
-        $this->assertEquals($originalValue, $invertedConvertedMoney->getAmount());
+        $this->assertEqualsWithDelta(floor($originalValue), $invertedConvertedMoney->getAmount(), 1);
     }
 }
