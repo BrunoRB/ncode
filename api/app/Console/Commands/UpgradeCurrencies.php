@@ -21,6 +21,8 @@ class UpgradeCurrencies extends Command
             ['United States dollar', '$', 'USD', 1],
             ['Euro', '€', 'EUR', 1.08],
             ['Brazillian Real', 'R$', 'BRL', 0.25],
+            ['Japanese Yen', '¥', 'JPY', 0.50],
+            ['Pound sterling', '£', 'GBP', 1.5]
         ]);
 
         $existing = Currency::whereIn('iso_code', $currencies->pluck(2))
