@@ -71,12 +71,11 @@ class Kernel extends HttpKernel
         /**
          * No need for CORS on production
          */
-        if (app()->environment('production')) {
-            $this->middleware = array_filter($this->middleware, function($m) {
+        if (env('APP_ENV') === 'production') {
+            $this->middleware = array_filter($this->middleware, function ($m) {
                 return $m !== \Fruitcake\Cors\HandleCors::class;
             });
         }
-
         parent::__construct($app, $router);
     }
 }
