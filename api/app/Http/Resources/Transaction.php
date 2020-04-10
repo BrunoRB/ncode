@@ -15,12 +15,13 @@ class Transaction extends JsonResource
         $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
 
         return [
+            'id' => $this->id,
             'amount' => $moneyFormatter->format($this->amount),
             'to_amount' => $moneyFormatter->format($this->to_amount),
             'from' => $this->from()->pluck('name')->first(),
             'to' => $this->to()->pluck('name')->first(),
             'created_at' => $this->created_at,
-            'id' => $this->id
+            'details' => $this->details
         ];
     }
 }

@@ -14,10 +14,11 @@ class Account extends JsonResource
         $numberFormatter = new \NumberFormatter('en_US', \NumberFormatter::CURRENCY);
         $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
 
-
         return [
             'id' => $this->id,
+            'name' => $this->name,
             'balance' => $moneyFormatter->format($this->balance),
+            'currency' => $this->balance->getCurrency()->getCode()
         ];
     }
 }
