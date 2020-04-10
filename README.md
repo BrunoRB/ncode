@@ -12,8 +12,6 @@ Not everything will be super robust, as I have finite time, but I hope this give
 
 ### Schema
 
- - Big integer on primary keys
-
  - Money should not be stored as a FLOAT.
  Numeric(14, 4) complies with GAAP, but I prefer bigintegers (multiply by 100 on storage, divide by 100 on retrival)
 
@@ -103,3 +101,23 @@ Not everything will be super robust, as I have finite time, but I hope this give
  - No need for any components since I'm doing something super simplistic
 
  - No need for vuex (we don't have any state)
+
+ ## Aftertoughts
+
+  - `vendor/bin/phpunit tests/`, there's a reasonable amount of them. I only tested the critical portions of the code.
+
+  - `php artisan db:seed` will create a bunch of accounts, each with a varaible number of transactions
+
+  - `php brybank:upgrade-currencies` creates the currencies and "upgrades" their exchange values. In reality is all
+  hardcoded, but in a real scenario that's where you would pool the data from some external API. All exchange values
+  are indexed to USD.
+
+  - I started the money handling with integers, completely by hand, no library.
+  But after an hour or two the code was becoming to messy (correct, but messy), so I choose to use the Money library.
+
+  - On the frontend I opted for not using TS. I recognize that type checking the `account`, `transactions` and `payments` structures would ideal, but for such a simple example project I didn't find it necessary.
+
+  - While the front-end is completely functional I focused more on the back-end, as that's where the really sensitive part
+  of the code lies.
+
+
