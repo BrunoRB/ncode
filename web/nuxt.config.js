@@ -1,5 +1,10 @@
 export default {
-  mode: "spa",
+  mode: "universal",
+
+  output: {
+    publicPath: "",
+  },
+
   /*
    ** Headers of the page
    */
@@ -20,6 +25,7 @@ export default {
    ** Customize the progress-bar color
    */
   loading: { color: "#fff" },
+
   /*
    ** Global CSS
    */
@@ -43,12 +49,28 @@ export default {
     "@nuxtjs/pwa",
     // Doc: https://github.com/nuxt-community/dotenv-module
     "@nuxtjs/dotenv",
+
+    "vue-currency-input/nuxt",
   ],
+
+  pwa: {
+    workbox: {
+      offline: false,
+      cacheAssets: false, // for /*
+    },
+  },
+
+  proxy: {
+    "/api": "http://127.0.0.1:8000",
+  },
+
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
-  axios: {},
+  axios: {
+    proxy: true,
+  },
   /*
    ** Build configuration
    */
@@ -64,6 +86,9 @@ export default {
           test: /\.(js|vue)$/,
           loader: "eslint-loader",
           exclude: /(node_modules)/,
+          options: {
+            fix: true
+          }
         })
       }
     },
